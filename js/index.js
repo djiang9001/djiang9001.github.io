@@ -89,7 +89,7 @@ function init() {
   loader.crossOrigin = "";
   var loader2 = new THREE.TextureLoader();
   loader2.crossOrigin = "";
-  dotTexture = loader2.load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/127738/dotTexture.png");
+  dotTexture = loader2.load("res/dotTexture.png");
   
   dotsMaterial = new THREE.PointsMaterial({
       size: userData.dotsSize,

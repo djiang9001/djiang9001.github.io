@@ -461,9 +461,10 @@ THREE.TrackballControls = function ( object, domElement ) {
 		if ( _this.enabled === false ) return;
 
 		if ( _this.noZoom === true ) return;
-
-		event.preventDefault();
-		event.stopPropagation();
+		
+		//prevents scrolling
+		//event.preventDefault();
+		//event.stopPropagation();
 
 		switch ( event.deltaMode ) {
 
