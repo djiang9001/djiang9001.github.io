@@ -1,6 +1,6 @@
 body{
   margin:0;
-  overflow: hidden;
+/*overflow: hidden;*/
   background:black;
 }
 canvas{
@@ -18,3 +18,13 @@ canvas{
 .cr.function{
   position: relative;
 }
+/*
+#container {
+  position: relative;
+}
+#container canvas, #overlay {
+  position: absolute;
+}
+canvas {
+  border: 1px solid black;
+}*/
