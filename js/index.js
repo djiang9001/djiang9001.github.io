@@ -57,10 +57,10 @@ function init() {
 	dotsFolder.addColor(userData, 'dotsColor').onChange(createStrokes);
   gui.add(userData, 'Download');
   
-  var download = document.createElement('a');
+/*  var download = document.createElement('a');
   download.setAttribute("id", "downloadButton");
   download.addEventListener('click', downloadImage);
-  document.querySelector(".cr.function").appendChild(download);
+  document.querySelector(".cr.function").appendChild(download);*/
 
   renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('canvas'),
@@ -170,7 +170,7 @@ function onResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(ww, wh);
 }
-
+/*
 function downloadImage(e){
   renderer.preserveDrawingBuffer = true;
   renderer.setClearColor(0x000000,0);
@@ -181,7 +181,7 @@ function downloadImage(e){
   renderer.preserveDrawingBuffer = false;
   renderer.setClearColor(new THREE.Color(userData.backgroundColor));
 }
-
+*/
 var render = function(a) {
   requestAnimationFrame(render);
   
