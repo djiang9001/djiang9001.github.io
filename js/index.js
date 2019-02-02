@@ -77,7 +77,7 @@ function init() {
   scene.fog = new THREE.Fog(0x000000, 800, 2500);
 
   camera = new THREE.PerspectiveCamera(50, ww / wh, 0.1, 10000);
-  camera.position.set(0, 100, 600);
+  camera.position.set(0, 1, 6);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   galaxy = new THREE.Object3D();
@@ -111,6 +111,7 @@ function init() {
   
   createStrokes();
   requestAnimationFrame(render);
+  dat.GUI.toggleHide();
 }
 
 var particlesRandom = [];
