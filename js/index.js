@@ -32,7 +32,7 @@ function Options(){
 	this.strokesColor = "#ffffff";
 	this.dotsColor = "#ffffff";
 	this.backgroundColor = "#000000";
-  this.Download = function(){};
+  //this.Download = function(){};
 }
 
 
@@ -55,7 +55,7 @@ function init() {
 	dotsFolder.add(userData, 'dotsSize', 0.1, 20).onChange(createStrokes);
 	dotsFolder.add(userData, 'dotsOpacity', 0.1, 1).step(0.01).onChange(createStrokes);
 	dotsFolder.addColor(userData, 'dotsColor').onChange(createStrokes);
-  gui.add(userData, 'Download');
+//  gui.add(userData, 'Download');
   
 /*  var download = document.createElement('a');
   download.setAttribute("id", "downloadButton");
@@ -83,7 +83,8 @@ function init() {
   galaxy = new THREE.Object3D();
   scene.add(galaxy);
   
-  controls = new THREE.TrackballControls(camera, renderer.domElement);
+  //removed renderer.domElement as second parameter to allow controls for entire page
+  controls = new THREE.TrackballControls(camera);
 
   var loader = new THREE.TextureLoader();
   loader.crossOrigin = "";
