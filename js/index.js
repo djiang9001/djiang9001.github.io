@@ -83,7 +83,7 @@ function init() {
   galaxy = new THREE.Object3D();
   scene.add(galaxy);
   
-  //removed renderer.domElement as second parameter to allow controls for entire page
+  //removed renderer.domElement as second parameter to allow controls for entire page, only works locally
   controls = new THREE.TrackballControls(camera);
 
   var loader = new THREE.TextureLoader();
