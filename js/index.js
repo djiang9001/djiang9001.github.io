@@ -32,35 +32,12 @@ function Options(){
 	this.strokesColor = "#ffffff";
 	this.dotsColor = "#ffffff";
 	this.backgroundColor = "#000000";
-  //this.Download = function(){};
 }
 
 
 function init() {
   
   userData = new Options(); 
-	/*var gui = new dat.GUI();
-  var globeFolder = gui.addFolder('Globe');
-  var strokesFolder = gui.addFolder('Strokes');
-  var dotsFolder = gui.addFolder('Dots');
-	globeFolder.add(userData, 'radius', 10, 500).onChange(createStrokes);
-	globeFolder.add(userData, 'amount', 10, 5000).onChange(createStrokes);
-	globeFolder.addColor(userData, 'backgroundColor').onChange(createStrokes);
-	strokesFolder.add(userData, 'connections', 0, 8).step(1).onChange(createStrokes);
-	strokesFolder.add(userData, 'distance', 1, 50).step(1).onChange(createStrokes);
-	strokesFolder.add(userData, 'linesOpacity', 0.1, 1).step(0.01).onChange(createStrokes);
-	strokesFolder.add(userData, 'height', 0, 100).onChange(createStrokes);
-	strokesFolder.addColor(userData, 'strokesColor').onChange(createStrokes);
-	dotsFolder.add(userData, 'dots').onChange(createStrokes);
-	dotsFolder.add(userData, 'dotsSize', 0.1, 20).onChange(createStrokes);
-	dotsFolder.add(userData, 'dotsOpacity', 0.1, 1).step(0.01).onChange(createStrokes);
-	dotsFolder.addColor(userData, 'dotsColor').onChange(createStrokes);
-//  gui.add(userData, 'Download');
-  
-/*  var download = document.createElement('a');
-  download.setAttribute("id", "downloadButton");
-  download.addEventListener('click', downloadImage);
-  document.querySelector(".cr.function").appendChild(download);*/
 
   renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('canvas'),
@@ -112,7 +89,6 @@ function init() {
   
   createStrokes();
   requestAnimationFrame(render);
-  //dat.GUI.toggleHide();
 }
 
 var particlesRandom = [];
@@ -171,18 +147,7 @@ function onResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(ww, wh);
 }
-/*
-function downloadImage(e){
-  renderer.preserveDrawingBuffer = true;
-  renderer.setClearColor(0x000000,0);
-  renderer.render(scene, camera);
-  imgData = renderer.domElement.toDataURL();
-  document.getElementById('downloadButton').href = imgData;
-  document.getElementById('downloadButton').setAttribute('download', 'GlobeInTheCloud.png');
-  renderer.preserveDrawingBuffer = false;
-  renderer.setClearColor(new THREE.Color(userData.backgroundColor));
-}
-*/
+
 var render = function(a) {
   requestAnimationFrame(render);
   
