@@ -39,7 +39,7 @@ function Options(){
 function init() {
   
   userData = new Options(); 
-	var gui = new dat.GUI();
+	/*var gui = new dat.GUI();
   var globeFolder = gui.addFolder('Globe');
   var strokesFolder = gui.addFolder('Strokes');
   var dotsFolder = gui.addFolder('Dots');
@@ -112,7 +112,7 @@ function init() {
   
   createStrokes();
   requestAnimationFrame(render);
-  dat.GUI.toggleHide();
+  //dat.GUI.toggleHide();
 }
 
 var particlesRandom = [];
