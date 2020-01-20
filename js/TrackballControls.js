@@ -384,6 +384,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		if ( _this.enabled === false ) return;
 
+		//allows click and drag to work if click starts on an html element
 		//event.preventDefault();
 		//event.stopPropagation();
 
