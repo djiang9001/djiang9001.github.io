@@ -30,6 +30,7 @@
 		</div>
 		
 		<div class="info">
+			<div id="projects">
 			<h2>Projects</h2>
 			<p><a href="https://github.com/djiang9001/client_side_youtube_downloader/" target="_blank">Youtube Video Downloader</a><br>
 				A web application for downloading media from Youtube. Use it <a href="https://djiang9001.github.io/client_side_youtube_downloader/" target="_blank">here</a>. </p>
@@ -37,9 +38,25 @@
 				A terminal based application for playing and visualizing WAV files. 
 				See a web-based demo <a href="https://djiang9001.github.io/sound_project/" target="_blank">here</a>. </p>
 			<p>For more projects, visit my <a href="https://github.com/djiang9001" target="_blank">GitHub profile</a>.</p>
-			
+			</div>
 		</div>
 		
+		<div class="scroll">
+			<img src="res/arrow.png" style="width: 5%">
+		</div>
+		<script>
+			window.addEventListener("scroll", function(){
+				var scrollY = document.getElementsByClassName("scroll")[0].getBoundingClientRect()["y"];
+				var projY = document.getElementById("projects").getBoundingClientRect()["y"];
+				var opacity = 1;
+				if (projY > scrollY && projY < window.innerHeight) {
+					opacity = (projY - scrollY) / (window.innerHeight - scrollY);
+				} else if (projY < scrollY) {
+					opacity = 0;
+				}
+				document.querySelector(".scroll").style.opacity = opacity;
+			});
+		</script>
 		
 	
 
