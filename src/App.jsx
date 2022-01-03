@@ -1,12 +1,12 @@
 import React from 'react'
 import { Root, Routes, addPrefetchExcludes } from 'react-static'
-import styled, { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 //
 import { Link, Router } from 'components/Router'
 import Dynamic from 'containers/Dynamic'
 import Content from 'components/Content'
 import Nav from 'components/Nav'
-import Box from 'components/Box'
+import Box, { AnimatedBox, AnimatedBoxContainer} from 'components/Box'
 
 //import './app.css'
 const GlobalStyle = createGlobalStyle`
@@ -20,8 +20,8 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16px;
     margin: 0;
     padding: 0;
-    background: #303170;
-    color: #ffc6a0;
+    background: black;//#303170;
+    color: white;//#ffc6a0;
   }
   a {
     text-decoration: none;
@@ -41,11 +41,11 @@ function App() {
     <Root>
       <GlobalStyle/>
       <Nav>
-        <Box><Link to="/">Home</Link></Box>
-        <Box><Link to="/about">About</Link></Box>
-        <Box><Link to="/blog">Blog</Link></Box>
-        <Box><Link to="/dynamic">Dynamic</Link></Box>
-        <Box>Menu Icon Here</Box>
+        <Link to="/"><AnimatedBoxContainer>Home</AnimatedBoxContainer></Link>
+        <Link to="/about"><AnimatedBoxContainer>About</AnimatedBoxContainer></Link>
+        <Link to="/blog"><AnimatedBoxContainer>Blog</AnimatedBoxContainer></Link>
+        <Link to="/dynamic"><AnimatedBoxContainer>Dynamic</AnimatedBoxContainer></Link>
+        <AnimatedBoxContainer>Menu Icon Here</AnimatedBoxContainer>
       </Nav>
       <Content>
         <React.Suspense fallback={<em>Loading...</em>}>
