@@ -5,8 +5,8 @@ import { createGlobalStyle } from 'styled-components'
 import { Link, Router } from 'components/Router'
 import Dynamic from 'containers/Dynamic'
 import Content from 'components/Content'
-import Nav from 'components/Nav'
-import Box, { AnimatedBox, AnimatedBoxContainer} from 'components/Box'
+import Nav, {AnimatedNav} from 'components/Nav'
+import AnimatedBoxContainer from 'components/Box'
 
 //import './app.css'
 const GlobalStyle = createGlobalStyle`
@@ -40,21 +40,19 @@ function App() {
   return (
     <Root>
       <GlobalStyle/>
-      <Nav>
+      <AnimatedNav>
         <Link to="/"><AnimatedBoxContainer>Home</AnimatedBoxContainer></Link>
         <Link to="/about"><AnimatedBoxContainer>About</AnimatedBoxContainer></Link>
         <Link to="/blog"><AnimatedBoxContainer>Blog</AnimatedBoxContainer></Link>
         <Link to="/dynamic"><AnimatedBoxContainer>Dynamic</AnimatedBoxContainer></Link>
         <AnimatedBoxContainer>Menu Icon Here</AnimatedBoxContainer>
-      </Nav>
-      <Content>
-        <React.Suspense fallback={<em>Loading...</em>}>
-          <Router>
-            <Dynamic path="dynamic" />
-            <Routes path="*" />
-          </Router>
-        </React.Suspense>
-      </Content>
+      </AnimatedNav>
+      <React.Suspense fallback={<em>Loading...</em>}>
+        <Router>
+          <Dynamic path="dynamic" />
+          <Routes path="*" />
+        </Router>
+      </React.Suspense>
     </Root>
   )
 }

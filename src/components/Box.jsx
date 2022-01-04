@@ -1,22 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
 import { keyframes } from 'styled-components'
-import Content from 'components/Content'
 const flicker = keyframes`
     0% {
         opacity: 50%;
     }
-    80% {
+    75% {
         opacity: 50%;
     }
     85% {
-        opacity: 80%;
-    }
-    90% {
-        opacity: 50%;
+        opacity: 100%;
     }
     95% {
-        opacity: 100%;
+        opacity: 50%;
     }
     100% {
         opacity: 80%;
@@ -78,7 +74,7 @@ export const PlaceholderDiv = styled.div`
     position: relative;
     display: grid;
     opacity: 80%;
-    animation: ${flicker} 1s linear;
+    animation: ${flicker} 0.5s linear;
 `
 
 export const TopBar = styled.div`
@@ -86,14 +82,16 @@ export const TopBar = styled.div`
     border-top: 2px solid white;
     box-sizing: border-box;
     grid-area: 1/1;
-    animation: ${appearTop} 1s linear;
+    animation: ${appearTop} 0.5s linear;
+    pointer-events: none;
 `
 export const BottomBar = styled.div`
     //background: blue;
     border-bottom: 2px solid white;
     box-sizing: border-box;
     grid-area: 2/1;
-    animation: ${appearBottom} 1s linear;
+    animation: ${appearBottom} 0.5s linear;
+    pointer-events: none;
 `
 
 export const BoxContent = styled.div`
@@ -101,7 +99,7 @@ export const BoxContent = styled.div`
   margin: 1rem;
   background: #272727;
   grid-area: 1/1/3/1;
-  animation: ${appearMiddle} 1s linear;
+  animation: ${appearMiddle} 0.5s linear;
 `
 
 export function AnimatedBoxContainer(props) {

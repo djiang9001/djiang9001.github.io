@@ -2,11 +2,12 @@ import React from 'react'
 import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
+import AnimatedBoxContainer from 'components/Box'
 
 export default function Blog() {
   const { posts } = useRouteData()
   return (
-    <div>
+    <AnimatedBoxContainer>
       <h1>It's blog time.</h1>
       <div>
         <a href="#bottom" id="top">
@@ -25,6 +26,6 @@ export default function Blog() {
       <a href="#top" id="bottom">
         Scroll to top!
       </a>
-    </div>
+    </AnimatedBoxContainer>
   )
 }
