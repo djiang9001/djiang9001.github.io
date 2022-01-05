@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { keyframes } from 'styled-components'
+import { CSSTransition } from "react-transition-group";
+
+const appearDuration = 500;
+const transitionName = `box`;
+
 const flicker = keyframes`
     0% {
         opacity: 50%;
@@ -70,40 +75,78 @@ const appearMiddle = keyframes`
     }
 `
 
-export const PlaceholderDiv = styled.div`
+const PlaceholderDiv = styled.div`
     position: relative;
     display: grid;
     opacity: 80%;
-    animation: ${flicker} 0.5s linear;
+    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+        animation: ${flicker} 0.5s linear;
+    }
+    &.${transitionName}-exit-active {
+        animation: ${flicker} 0.5s linear reverse;
+    }
 `
 
-export const TopBar = styled.div`
-    //background: red;
+const TopBar = styled.div`
     border-top: 2px solid white;
     box-sizing: border-box;
     grid-area: 1/1;
-    animation: ${appearTop} 0.5s linear;
     pointer-events: none;
+    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+        animation: ${appearTop} 0.5s linear;
+    }
+    &.${transitionName}-exit-active {
+        animation: ${appearTop} 0.5s linear reverse;
+    }
 `
-export const BottomBar = styled.div`
-    //background: blue;
+const BottomBar = styled.div`
     border-bottom: 2px solid white;
     box-sizing: border-box;
     grid-area: 2/1;
-    animation: ${appearBottom} 0.5s linear;
     pointer-events: none;
+    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+        animation: ${appearBottom} 0.5s linear;
+    }
+    &.${transitionName}-exit-active {
+        animation: ${appearBottom} 0.5s linear reverse;
+    }
 `
 
-export const BoxContent = styled.div`
-  padding: 1rem;
-  margin: 1rem;
-  background: #272727;
-  grid-area: 1/1/3/1;
-  animation: ${appearMiddle} 0.5s linear;
+const BoxContent = styled.div`
+    padding: 1rem;
+    margin: 1rem;
+    background: #272727;
+    grid-area: 1/1/3/1;
+    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+        animation: ${appearMiddle} 0.5s linear;
+    }
+    &.${transitionName}-exit-active {
+        animation: ${appearMiddle} 0.5s linear reverse;
+    }
 `
 
 export function AnimatedBoxContainer(props) {
-    return <PlaceholderDiv><BoxContent>{props.children}</BoxContent><TopBar/><BottomBar/></PlaceholderDiv>
+    const [inProp, setInProp] = useState(true);
+    useEffect(() => {
+        setInProp(props.inProp)
+    });
+    return (
+        <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
+            <PlaceholderDiv>
+                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                <BoxContent>
+                    {props.children}
+                </BoxContent>
+                </CSSTransition>
+                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                <TopBar/>
+                </CSSTransition>
+                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                <BottomBar/>
+                </CSSTransition>
+            </PlaceholderDiv>
+        </CSSTransition>
+    );
 }
 
 export default AnimatedBoxContainer

@@ -2,10 +2,11 @@ import React from 'react'
 import { Root, Routes, addPrefetchExcludes } from 'react-static'
 import { createGlobalStyle } from 'styled-components'
 //
-import { Link, Router } from 'components/Router'
+import { Link, Router, Location } from 'components/Router'
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 import Dynamic from 'containers/Dynamic'
 import Content from 'components/Content'
-import Nav, {AnimatedNav} from 'components/Nav'
+import { AnimatedNav } from 'components/Nav'
 import AnimatedBoxContainer from 'components/Box'
 
 //import './app.css'

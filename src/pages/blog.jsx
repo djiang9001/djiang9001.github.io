@@ -7,7 +7,7 @@ import AnimatedBoxContainer from 'components/Box'
 export default function Blog() {
   const { posts } = useRouteData()
   return (
-    <AnimatedBoxContainer>
+    <div>
       <h1>It's blog time.</h1>
       <div>
         <a href="#bottom" id="top">
@@ -26,6 +26,6 @@ export default function Blog() {
       <a href="#top" id="bottom">
         Scroll to top!
       </a>
-    </AnimatedBoxContainer>
+    </div>
   )
 }

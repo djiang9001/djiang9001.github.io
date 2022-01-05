@@ -19,6 +19,7 @@
     "react-static-plugin-sitemap": "^7.5.1",
     "react-static-plugin-source-filesystem": "^7.5.1",
     "react-static-plugin-styled-components": "^7.6.2",
+    "react-transition-group": "^4.4.2",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
