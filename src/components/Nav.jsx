@@ -3,13 +3,36 @@ import styled from 'styled-components'
 import { CSSTransition } from "react-transition-group";
 
 export const Nav = styled.nav`
-width: 100%;
-text-align: center;
-display: flex;
-padding: 1rem;
-gap: 1rem;
-justify-content: flex-end;
-box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+    justify-content: flex-end;
+    box-sizing: border-box;
+`
+
+const MenuBar = styled.div`
+    width: 19px;
+    height: 3px;
+    background-color: white;
+`
+
+function MenuIcon() {
+    const [rotate, setRotate] = useState(-90);
+    
+    function rotateIcon() {
+        setRotate((rotate - 90) % 180);
+    }
+    const style = {
+        transform: `rotate(${rotate}deg)`,
+        transition: 'transform 0.5s'
+    }
+    return <div onClick={ rotateIcon } style={ style }><MenuBar/><MenuBar style={{margin: '5px 0 5px 0'}}/><MenuBar/></div>
+}
+
+export const AnimatedMenuIcon = styled(MenuIcon)`
+    transition: transform 1s;
 `
 
 export function AnimatedNav(props) {

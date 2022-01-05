@@ -127,6 +127,9 @@ const BoxContent = styled.div`
     margin: 1rem;
     background: #272727;
     grid-area: 1/1/3/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     &.${transitionName}-enter-active, &.${transitionName}-appear-active {
         animation: ${appearMiddle} 0.5s linear;
     }
@@ -139,7 +142,7 @@ const BoxContent = styled.div`
 `
 
 export function AnimatedBoxContainer(props) {
-    const inProp = props.inProp;
+    const { inProp = true, clickable = true } = props;
     return (
         <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
             <PlaceholderDiv>

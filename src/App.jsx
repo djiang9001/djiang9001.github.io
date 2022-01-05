@@ -6,7 +6,7 @@ import { Link, Router, Location } from 'components/Router'
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import Dynamic from 'containers/Dynamic'
 import Content from 'components/Content'
-import { AnimatedNav } from 'components/Nav'
+import { AnimatedNav, AnimatedMenuIcon } from 'components/Nav'
 import AnimatedBoxContainer from 'components/Box'
 
 //import './app.css'
@@ -46,7 +46,7 @@ function App() {
         <AnimatedBoxContainer><Link to="/about">About</Link></AnimatedBoxContainer>
         <AnimatedBoxContainer><Link to="/blog">Blog</Link></AnimatedBoxContainer>
         <AnimatedBoxContainer><Link to="/dynamic">Dynamic</Link></AnimatedBoxContainer>
-        <AnimatedBoxContainer>Menu Icon Here</AnimatedBoxContainer>
+        <AnimatedBoxContainer><AnimatedMenuIcon/></AnimatedBoxContainer>
       </AnimatedNav>
       <React.Suspense fallback={<em>Loading...</em>}>
         <Router>
