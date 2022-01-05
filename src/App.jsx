@@ -42,10 +42,10 @@ function App() {
     <Root>
       <GlobalStyle/>
       <AnimatedNav>
-        <Link to="/"><AnimatedBoxContainer>Home</AnimatedBoxContainer></Link>
-        <Link to="/about"><AnimatedBoxContainer>About</AnimatedBoxContainer></Link>
-        <Link to="/blog"><AnimatedBoxContainer>Blog</AnimatedBoxContainer></Link>
-        <Link to="/dynamic"><AnimatedBoxContainer>Dynamic</AnimatedBoxContainer></Link>
+        <AnimatedBoxContainer><Link to="/">Home</Link></AnimatedBoxContainer>
+        <AnimatedBoxContainer><Link to="/about">About</Link></AnimatedBoxContainer>
+        <AnimatedBoxContainer><Link to="/blog">Blog</Link></AnimatedBoxContainer>
+        <AnimatedBoxContainer><Link to="/dynamic">Dynamic</Link></AnimatedBoxContainer>
         <AnimatedBoxContainer>Menu Icon Here</AnimatedBoxContainer>
       </AnimatedNav>
       <React.Suspense fallback={<em>Loading...</em>}>
