@@ -1,6 +1,8 @@
 import React, { useState, cloneElement }  from 'react'
 import styled from 'styled-components'
 import { CSSTransition } from "react-transition-group";
+import AnimatedBoxContainer from 'components/Box'
+
 
 export const Nav = styled.nav`
     width: 100%;
@@ -18,17 +20,14 @@ const MenuBar = styled.div`
     background-color: white;
 `
 
-function MenuIcon() {
-    const [rotate, setRotate] = useState(-90);
+function MenuIcon(props) {
+    const { rotate = 0 } = props;
     
-    function rotateIcon() {
-        setRotate((rotate - 90) % 180);
-    }
     const style = {
         transform: `rotate(${rotate}deg)`,
         transition: 'transform 0.5s'
     }
-    return <div onClick={ rotateIcon } style={ style }><MenuBar/><MenuBar style={{margin: '5px 0 5px 0'}}/><MenuBar/></div>
+    return <div style={ style }><MenuBar/><MenuBar style={{margin: '5px 0 5px 0'}}/><MenuBar/></div>
 }
 
 export const AnimatedMenuIcon = styled(MenuIcon)`
@@ -37,9 +36,8 @@ export const AnimatedMenuIcon = styled(MenuIcon)`
 
 export function AnimatedNav(props) {
     const [inProp, setInProp] = useState(true);
-    var navLinks = React.Children.toArray(props.children).slice(0,-1);
-    var navToggle = React.Children.toArray(props.children).at(-1);
-    const newNavLinks = React.Children.map(navLinks, link => {
+    const rotate = inProp ? -90 : 0;
+    const newNavLinks = React.Children.map(props.children, link => {
         // Checking isValidElement is the safe way and avoids a typescript
         // error too.
         if (React.isValidElement(link)) {
@@ -54,7 +52,7 @@ export function AnimatedNav(props) {
         <Nav>
             {newNavLinks}
             <button style={{ all: 'unset', cursor: 'pointer' }} onClick={ toggleLinks }>
-                {navToggle}
+                <AnimatedBoxContainer><AnimatedMenuIcon rotate={rotate}/></AnimatedBoxContainer>
             </button>
         </Nav>
     );

@@ -172,7 +172,15 @@ export function AnimatedBoxContainer(props) {
     // {ComponentName}Props: extra props to be passed to their respsective components
     // Wrapper: component that you want to wrap the box in
     // restProps: all other props, which are passed to the Wrapper component
-    const { inProp = true, placeholderDivProps, boxContentProps, topBarProps, bottomBarProps, Wrapper = React.Fragment , ...restProps } = props;
+    const { 
+        inProp = true,
+        placeholderDivProps,
+        boxContentProps,
+        topBarProps,
+        bottomBarProps,
+        Wrapper = React.Fragment,
+        ...restProps
+    } = props;
     function clickBoxContent() {
         if (clickable) {
             console.log('click');
@@ -198,5 +206,9 @@ export function AnimatedBoxContainer(props) {
         </Wrapper>
     );
 }
+
+// Button box needs to: be wrapped in a button, the button needs to send click event to parent and children
+// We should move the menu button into Nav completely
+// Then it should be easy to send props to BoxContent on click.
 
 export default AnimatedBoxContainer
