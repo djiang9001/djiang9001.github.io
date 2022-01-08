@@ -171,34 +171,30 @@ export function AnimatedBoxContainer(props) {
     // inProp: true if you want the box to be visible on first mount
     // {ComponentName}Props: extra props to be passed to their respsective components
     // Wrapper: component that you want to wrap the box in
-    // restProps: all other props, which are passed to the Wrapper component
+    // wrapperProps: all other props, which are passed to the Wrapper component
     const { 
         inProp = true,
+        cssTransitionProps,
         placeholderDivProps,
         boxContentProps,
         topBarProps,
         bottomBarProps,
         Wrapper = React.Fragment,
-        ...restProps
+        wrapperProps
     } = props;
-    function clickBoxContent() {
-        if (clickable) {
-            console.log('click');
-        }
-    }
     return (
-        <Wrapper {...restProps}>
-            <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName}>
+        <Wrapper {...wrapperProps}>
+            <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
                 <PlaceholderDiv {...placeholderDivProps}>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
                     <BoxContent {...boxContentProps}>
                         {props.children}
                     </BoxContent>
                     </CSSTransition>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
                     <TopBar {...topBarProps}/>
                     </CSSTransition>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName}>
+                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
                     <BottomBar {...bottomBarProps}/>
                     </CSSTransition>
                 </PlaceholderDiv>

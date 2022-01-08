@@ -1,6 +1,6 @@
 import React from 'react'
 import { Root, Routes, addPrefetchExcludes } from 'react-static'
-import { createGlobalStyle } from 'styled-components'
+import styledComponents, { createGlobalStyle } from 'styled-components'
 //
 import { Link, Router, Location } from 'components/Router'
 import { TransitionGroup, CSSTransition } from "react-transition-group";
@@ -37,15 +37,33 @@ const GlobalStyle = createGlobalStyle`
 // Any routes that start with 'dynamic' will be treated as non-static routes
 addPrefetchExcludes(['dynamic'])
 
+function FadeTransitionRouter(props) {
+  return (
+    <Location>
+      {({ location }) => (
+        <TransitionGroup className="transition-group">
+          <CSSTransition appear={true} inProp={true} key={location.key} classNames="box" timeout={500}>
+            <AnimatedBoxContainer>
+            <Router location={location}>
+              {props.children}
+            </Router>
+            </AnimatedBoxContainer>
+          </CSSTransition>
+        </TransitionGroup>
+      )}
+    </Location>
+  );
+}
+
 function App() {
   return (
     <Root>
       <GlobalStyle/>
       <AnimatedNav>
-        <AnimatedBoxContainer Wrapper={Link} to="/">Home</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} to="/about">About</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} to="/blog">Blog</AnimatedBoxContainer>
-        <AnimatedBoxContainer topBarProps={{style: {background: 'red'}}} Wrapper={Link} to="/dynamic">Dynamic</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/'}}>Home</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/about'}} to="/about">About</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/blog'}} to="/blog">Blog</AnimatedBoxContainer>
+        <AnimatedBoxContainer topBarProps={{style: {background: 'red'}}} Wrapper={Link} wrapperProps={{to:'/dynamic'}}>Dynamic</AnimatedBoxContainer>
       </AnimatedNav>
       <React.Suspense fallback={<em>Loading...</em>}>
         <Router>
