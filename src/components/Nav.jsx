@@ -11,6 +11,7 @@ export const Nav = styled.nav`
     padding: 1rem;
     gap: 1rem;
     justify-content: flex-end;
+    align-items: center;
     box-sizing: border-box;
 `
 
@@ -52,7 +53,7 @@ export function AnimatedNav(props) {
         <Nav>
             {newNavLinks}
             <button style={{ all: 'unset', cursor: 'pointer' }} onClick={ toggleLinks }>
-                <AnimatedBoxContainer><AnimatedMenuIcon rotate={rotate}/></AnimatedBoxContainer>
+                <AnimatedBoxContainer clickable><AnimatedMenuIcon rotate={rotate}/></AnimatedBoxContainer>
             </button>
         </Nav>
     );

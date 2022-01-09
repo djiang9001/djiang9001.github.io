@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { keyframes } from 'styled-components'
-import { CSSTransition } from "react-transition-group";
+import React from 'react'
+import styled, { keyframes, css } from 'styled-components'
+import { Transition } from "react-transition-group";
 
 const appearDuration = 475;
 const transitionName = `box`;
@@ -21,6 +20,46 @@ const flicker = keyframes`
     }
     100% {
         opacity: 80%;
+    }
+`
+const flickerTop = keyframes`
+    0% {
+        opacity: 50%;
+    }
+    75% {
+        opacity: 50%;
+    }
+    85% {
+        opacity: 100%;
+        background: linear-gradient(to top, transparent, 80%, white);
+    }
+    95% {
+        opacity: 50%;
+        background: linear-gradient(to top, transparent, 80%, white);
+    }
+    100% {
+        opacity: 80%;
+        background: linear-gradient(to top, transparent, 80%, white);
+    }
+`
+const flickerBottom = keyframes`
+    0% {
+        opacity: 50%;
+    }
+    75% {
+        opacity: 50%;
+    }
+    85% {
+        opacity: 100%;
+        background: linear-gradient(to bottom, transparent, 80%, white);
+    }
+    95% {
+        opacity: 50%;
+        background: linear-gradient(to bottom, transparent, 80%, white);
+    }
+    100% {
+        opacity: 80%;
+        background: linear-gradient(to bottom, transparent, 80%, white);
     }
 `
 const appearTop = keyframes`
@@ -80,45 +119,69 @@ const PlaceholderDiv = styled.div`
     display: grid;
     opacity: 80%;
     z-index: 1;
-    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+    &.${transitionName}-entering {
         animation: ${flicker} 0.5s linear;
     }
-    &.${transitionName}-exit-active {
+    &.${transitionName}-exiting {
         animation: ${flicker} 0.5s linear reverse;
     }
-    &.${transitionName}-exit-done {
-        display: none;
+    &.${transitionName}-exited {
+        visibility: hidden;
     }
 `
 
-const TopBar = styled.div`
+const TopBarStatic = styled.div`
     border-top: 2px solid white;
     box-sizing: border-box;
     grid-area: 1/1;
     pointer-events: none;
-    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
-        animation: ${appearTop} 0.5s linear;
+    &.${transitionName}-entering {
+        animation: ${appearTop} 0.5s linear, ${flickerTop} 0.5s linear;
     }
-    &.${transitionName}-exit-active {
-        animation: ${appearTop} 0.5s linear reverse;
+    &.${transitionName}-exiting {
+        animation: ${appearTop} 0.5s linear reverse, ${flickerTop} 0.5s linear reverse;
     }
-    &.${transitionName}-exit-done {
-        display: none;
+    &.${transitionName}-exited {
+        visibility: hidden;
     }
 `
-const BottomBar = styled.div`
+const TopBarClickable = styled(TopBarStatic)`
+    ${PlaceholderDiv}:hover & {
+        transition: transform 0.5s;
+        transform: translateY(0.5rem);
+        background: linear-gradient(to top, transparent, 80%, white);
+        background-clip: padding-box;
+    }
+    ${PlaceholderDiv}:active & {
+        transform: translateY(0);
+        transition: none;
+    }
+`
+const BottomBarStatic = styled.div`
     border-bottom: 2px solid white;
     box-sizing: border-box;
     grid-area: 2/1;
     pointer-events: none;
-    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
-        animation: ${appearBottom} 0.5s linear;
+    &.${transitionName}-entering {
+        animation: ${appearBottom} 0.5s linear, ${flickerBottom} 0.5s linear;
     }
-    &.${transitionName}-exit-active {
-        animation: ${appearBottom} 0.5s linear reverse;
+    &.${transitionName}-exiting {
+        animation: ${appearBottom} 0.5s linear reverse, ${flickerBottom} 0.5s linear reverse;
     }
-    &.${transitionName}-exit-done {
-        display: none;
+    &.${transitionName}-exited {
+        visibility: hidden;
+    }
+`
+const BottomBarClickable = styled(BottomBarStatic)`
+    ${PlaceholderDiv}:hover & {
+        transition: transform 0.5s;
+        transform: translateY(-0.5rem);
+        background: linear-gradient(to bottom, transparent, 80%, white);
+        background-clip: padding-box;
+    }
+    ${PlaceholderDiv}:active & {
+        transform: translateY(0);
+        transition: none;
     }
 `
 
@@ -130,81 +193,60 @@ const BoxContent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    &.${transitionName}-enter-active, &.${transitionName}-appear-active {
+    &.${transitionName}-entering {
         animation: ${appearMiddle} 0.5s linear;
     }
-    &.${transitionName}-exit-active {
+    &.${transitionName}-exiting {
         animation: ${appearMiddle} 0.5s linear reverse;
     }
-    &.${transitionName}-exit-done {
-        display: none;
+    &.${transitionName}-exited {
+        visibility: hidden;
     }
 `
-/*
-export function AnimatedBoxContainer(props) {
-    const { inProp = true, clickable = true } = props;
-    function clickBoxContent() {
-        if (clickable) {
-            console.log('click');
-        }
-    }
+
+function Box(props) {
+    const {
+        state,
+        clickable
+    } = props;
+    const TopBar = clickable ? <TopBarClickable className={`box-${state}`}/> : <TopBarStatic className={`box-${state}`}/>;
+    const BottomBar = clickable ? <BottomBarClickable className={`box-${state}`}/> : <BottomBarStatic className={`box-${state}`}/>;
     return (
-        <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
-            <PlaceholderDiv {...(clickable ? {onClick: clickBoxContent} : {})}>
-                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
-                <BoxContent>
-                    {props.children}
-                </BoxContent>
-                </CSSTransition>
-                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
-                <TopBar/>
-                </CSSTransition>
-                <CSSTransition appear={true} in={inProp} timeout={appearDuration} classNames={transitionName}>
-                <BottomBar/>
-                </CSSTransition>
-            </PlaceholderDiv>
-        </CSSTransition>
+        <PlaceholderDiv className={`box-${state}`}>
+            <BoxContent className={`box-${state}`}>
+                {props.children}
+            </BoxContent>
+            {TopBar}
+            {BottomBar}
+        </PlaceholderDiv>
     );
 }
-*/
 export function AnimatedBoxContainer(props) {
-    // inProp: true if you want the box to be visible on first mount
-    // {ComponentName}Props: extra props to be passed to their respsective components
+    // inProp: true if you want to show the component
+    // appear: true if you want the box to be visible on first mount
+    // clickable: pass this prop to get animations on hover and click
     // Wrapper: component that you want to wrap the box in
     // wrapperProps: all other props, which are passed to the Wrapper component
+    // restProps: additional props, passed to the Transition component
     const { 
         inProp = true,
-        cssTransitionProps,
-        placeholderDivProps,
-        boxContentProps,
-        topBarProps,
-        bottomBarProps,
+        appear = true,
+        clickable, 
         Wrapper = React.Fragment,
-        wrapperProps
+        wrapperProps,
+        ...restProps
     } = props;
     return (
-        <Wrapper {...wrapperProps}>
-            <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
-                <PlaceholderDiv {...placeholderDivProps}>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
-                    <BoxContent {...boxContentProps}>
+        <Transition appear={appear} in={inProp} timeout={appearDuration} {...restProps}>
+            {state => (
+                <Wrapper {...wrapperProps}>
+                    <Box state={state} clickable={clickable}>
                         {props.children}
-                    </BoxContent>
-                    </CSSTransition>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
-                    <TopBar {...topBarProps}/>
-                    </CSSTransition>
-                    <CSSTransition appear={inProp} in={inProp} timeout={appearDuration} classNames={transitionName} {...cssTransitionProps}>
-                    <BottomBar {...bottomBarProps}/>
-                    </CSSTransition>
-                </PlaceholderDiv>
-            </CSSTransition>
-        </Wrapper>
+                    </Box>
+                </Wrapper>
+            )}
+        </Transition>
     );
 }
-
-// Button box needs to: be wrapped in a button, the button needs to send click event to parent and children
-// We should move the menu button into Nav completely
-// Then it should be easy to send props to BoxContent on click.
 
 export default AnimatedBoxContainer

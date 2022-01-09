@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
-import AnimatedBoxContainer from 'components/Box'
 
 export default function Blog() {
+  const [oldPosts, setOldPosts] = useState([]);
   const { posts } = useRouteData()
+  if (posts) {
+    if (oldPosts.length != posts.length)
+      setOldPosts(posts);
+  } else if (!oldPosts) {
+    return <div>No Posts</div>
+  }
   return (
     <div>
       <h1>It's blog time.</h1>
@@ -17,7 +23,7 @@ export default function Blog() {
       <br />
       All Posts:
       <ul>
-        {posts.map(post => (
+        {oldPosts.map(post => (
           <li key={post.id}>
             <Link to={`/blog/post/${post.id}/`}>{post.title}</Link>
           </li>
@@ -27,5 +33,5 @@ export default function Blog() {
         Scroll to top!
       </a>
     </div>
-  )
+  );
 }

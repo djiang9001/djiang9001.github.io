@@ -1,13 +1,12 @@
 import React from 'react'
 import { Root, Routes, addPrefetchExcludes } from 'react-static'
-import styledComponents, { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 //
-import { Link, Router, Location } from 'components/Router'
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { Link, Router } from 'components/Router'
+import { SwitchTransition } from "react-transition-group";
 import Dynamic from 'containers/Dynamic'
-import Content from 'components/Content'
 import { AnimatedNav } from 'components/Nav'
-import AnimatedBoxContainer from 'components/Box'
+import AnimatedBoxContainer, { ClickableAnimatedBoxContainer } from 'components/Box'
 
 //import './app.css'
 const GlobalStyle = createGlobalStyle`
@@ -37,21 +36,15 @@ const GlobalStyle = createGlobalStyle`
 // Any routes that start with 'dynamic' will be treated as non-static routes
 addPrefetchExcludes(['dynamic'])
 
-function FadeTransitionRouter(props) {
+function routeRender({routePath, getComponentForPath}) {
+  // The routePath is used to retrieve the component for that path
+  const element = getComponentForPath(routePath)
   return (
-    <Location>
-      {({ location }) => (
-        <TransitionGroup className="transition-group">
-          <CSSTransition appear={true} inProp={true} key={location.key} classNames="box" timeout={500}>
-            <AnimatedBoxContainer>
-            <Router location={location}>
-              {props.children}
-            </Router>
-            </AnimatedBoxContainer>
-          </CSSTransition>
-        </TransitionGroup>
-      )}
-    </Location>
+    <SwitchTransition mode={'out-in'}>
+      <AnimatedBoxContainer key={routePath}>
+        {element}
+      </AnimatedBoxContainer>
+    </SwitchTransition>
   );
 }
 
@@ -60,16 +53,16 @@ function App() {
     <Root>
       <GlobalStyle/>
       <AnimatedNav>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/'}}>Home</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/about'}} to="/about">About</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/blog'}} to="/blog">Blog</AnimatedBoxContainer>
-        <AnimatedBoxContainer topBarProps={{style: {background: 'red'}}} Wrapper={Link} wrapperProps={{to:'/dynamic'}}>Dynamic</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/'}} clickable>Home</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/about'}} clickable>About</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/blog'}} clickable>Blog</AnimatedBoxContainer>
+        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/dynamic'}} clickable>Dynamic</AnimatedBoxContainer>
       </AnimatedNav>
-      <React.Suspense fallback={<em>Loading...</em>}>
-        <Router>
-          <Dynamic path="dynamic" />
-          <Routes path="*" />
-        </Router>
+      <React.Suspense fallback={<em></em>}>
+          <Router>
+            <Dynamic path="dynamic"/>
+            <Routes path="*" render={routeRender}/>
+          </Router>
       </React.Suspense>
     </Root>
   )
