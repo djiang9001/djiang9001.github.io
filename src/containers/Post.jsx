@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
+import { Box } from 'components/Box'
 
-export default function Post() {
+export default function Post(props) {
   const [oldPost, setOldPost] = useState({});
   const { post } = useRouteData();
   if (post) {
@@ -13,11 +14,13 @@ export default function Post() {
     return <div>No post</div>
   }
   return (
+    <Box state={props.state}>
     <div>
       <Link to="/blog/">{'<'} Back</Link>
       <br />
       <h3>{oldPost.title}</h3>
       <p>{oldPost.body}</p>
     </div>
+    </Box>
   );
 }

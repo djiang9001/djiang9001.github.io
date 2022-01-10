@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
+import { Box } from 'components/Box'
 
-export default function Blog() {
+export default function Blog(props) {
   const [oldPosts, setOldPosts] = useState([]);
   const { posts } = useRouteData()
   if (posts) {
@@ -13,6 +14,7 @@ export default function Blog() {
     return <div>No Posts</div>
   }
   return (
+    <Box state={props.state}>
     <div>
       <h1>It's blog time.</h1>
       <div>
@@ -33,5 +35,6 @@ export default function Blog() {
         Scroll to top!
       </a>
     </div>
+    </Box>
   );
 }

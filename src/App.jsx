@@ -6,7 +6,7 @@ import { Link, Router } from 'components/Router'
 import { SwitchTransition } from "react-transition-group";
 import Dynamic from 'containers/Dynamic'
 import { AnimatedNav } from 'components/Nav'
-import AnimatedBoxContainer, { ClickableAnimatedBoxContainer } from 'components/Box'
+import { AnimatedBox, AnimatedBoxContainer } from 'components/Box'
 
 //import './app.css'
 const GlobalStyle = createGlobalStyle`
@@ -53,10 +53,10 @@ function App() {
     <Root>
       <GlobalStyle/>
       <AnimatedNav>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/'}} clickable>Home</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/about'}} clickable>About</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/blog'}} clickable>Blog</AnimatedBoxContainer>
-        <AnimatedBoxContainer Wrapper={Link} wrapperProps={{to:'/dynamic'}} clickable>Dynamic</AnimatedBoxContainer>
+        <AnimatedBox Wrapper={Link} wrapperProps={{to:'/'}} clickable>Home</AnimatedBox>
+        <AnimatedBox Wrapper={Link} wrapperProps={{to:'/about'}} clickable>About</AnimatedBox>
+        <AnimatedBox Wrapper={Link} wrapperProps={{to:'/blog'}} clickable>Blog</AnimatedBox>
+        <AnimatedBox Wrapper={Link} wrapperProps={{to:'/dynamic'}} clickable>Dynamic</AnimatedBox>
       </AnimatedNav>
       <React.Suspense fallback={<em></em>}>
           <Router>

@@ -1,7 +1,6 @@
-import React, { useState, cloneElement }  from 'react'
+import React, { useState }  from 'react'
 import styled from 'styled-components'
-import { CSSTransition } from "react-transition-group";
-import AnimatedBoxContainer from 'components/Box'
+import { AnimatedBox } from 'components/Box'
 
 
 export const Nav = styled.nav`
@@ -53,7 +52,7 @@ export function AnimatedNav(props) {
         <Nav>
             {newNavLinks}
             <button style={{ all: 'unset', cursor: 'pointer' }} onClick={ toggleLinks }>
-                <AnimatedBoxContainer clickable><AnimatedMenuIcon rotate={rotate}/></AnimatedBoxContainer>
+                <AnimatedBox clickable><AnimatedMenuIcon rotate={rotate}/></AnimatedBox>
             </button>
         </Nav>
     );

@@ -204,49 +204,73 @@ const BoxContent = styled.div`
     }
 `
 
-function Box(props) {
+export function Box(props) {
+    // props:
+    //   state: Pass this prop to allow for animation: <Box state={props.state}>
+    //   clickable: If true, will add hover and active animations
+    //   Wrapper: Use to wrap the box in some element, eg. a Link or button to make the box clickable.
+    //            Useful for cases where parent element needs to pass props to Box (eg. AnimatedBoxContainer)
+    //   wrapperProps: A set of props to pass to the Wrapper
     const {
         state,
-        clickable
+        clickable,
+        Wrapper = React.Fragment,
+        wrapperProps
     } = props;
     const TopBar = clickable ? <TopBarClickable className={`box-${state}`}/> : <TopBarStatic className={`box-${state}`}/>;
     const BottomBar = clickable ? <BottomBarClickable className={`box-${state}`}/> : <BottomBarStatic className={`box-${state}`}/>;
     return (
-        <PlaceholderDiv className={`box-${state}`}>
-            <BoxContent className={`box-${state}`}>
-                {props.children}
-            </BoxContent>
-            {TopBar}
-            {BottomBar}
-        </PlaceholderDiv>
+        <Wrapper {...wrapperProps}>
+            <PlaceholderDiv className={`box-${state}`}>
+                <BoxContent className={`box-${state}`}>
+                    {props.children}
+                </BoxContent>
+                {TopBar}
+                {BottomBar}
+            </PlaceholderDiv>
+        </Wrapper>
     );
 }
-export function AnimatedBoxContainer(props) {
-    // inProp: true if you want to show the component
-    // appear: true if you want the box to be visible on first mount
-    // clickable: pass this prop to get animations on hover and click
-    // Wrapper: component that you want to wrap the box in
-    // wrapperProps: all other props, which are passed to the Wrapper component
-    // restProps: additional props, passed to the Transition component
-    const { 
+export function AnimatedBox(props) {
+    // A single animated box.
+    const {
         inProp = true,
         appear = true,
-        clickable, 
-        Wrapper = React.Fragment,
-        wrapperProps,
         ...restProps
     } = props;
     return (
-        <Transition appear={appear} in={inProp} timeout={appearDuration} {...restProps}>
-            {state => (
-                <Wrapper {...wrapperProps}>
-                    <Box state={state} clickable={clickable}>
-                        {props.children}
-                    </Box>
-                </Wrapper>
-            )}
-        </Transition>
+        <AnimatedBoxContainer appear={appear} inProp={inProp}>
+            <Box {...restProps}>
+                {props.children}
+            </Box>
+        </AnimatedBoxContainer>
     );
 }
 
-export default AnimatedBoxContainer
+export function AnimatedBoxContainer(props) {
+    // This is used to wrap multiple components (eg. Box) with a single Transition element.
+    // It just passes the state prop to each child.
+    // This is to facilitate page transitions (see routeRender in App.jsx)
+    // since SwitchTransition accepts only one Transition child.
+    // So if we have a page with multiple boxes that need to animate on route,
+    // they need to all be children of a single Transition component.
+    const {
+        inProp = true,
+        appear = true
+    } = props;
+    return (
+        <Transition appear={appear} in={inProp} timeout={appearDuration} {...props}>
+            {state => {
+                const newChildren = React.Children.map(props.children, child => {
+                    // Checking isValidElement is the safe way and avoids a typescript
+                    // error too.
+                    if (React.isValidElement(child)) {
+                      return React.cloneElement(child, { state: state });
+                    }
+                    return child;
+                  });
+                return <>{newChildren}</>
+            }}
+        </Transition>
+    );
+}

@@ -1,8 +1,12 @@
 import React from 'react'
-import AnimatedBoxContainer from 'components/Box'
+import { Box } from 'components/Box'
 
-export default () => (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Welcome to React-Static</h1>
-    </div>
+export default (props) => (
+  <div style={{ padding: '10vh 20vw 10vh 20vw' }}>
+    <Box state={props.state}>
+      <div style={{ textAlign: 'center' }}>
+        <h1>Welcome to React-Static</h1>
+      </div>
+    </Box>
+  </div>
 )

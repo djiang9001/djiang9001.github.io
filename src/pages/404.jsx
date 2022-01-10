@@ -1,7 +1,7 @@
 import React from 'react'
-import AnimatedBoxContainer from 'components/Box'
+import { Box } from 'components/Box'
 
-export default function NotFound() {
+export default function NotFound(props) {
   const [ready, setReady] = React.useState(false)
 
   React.useEffect(() => {
@@ -9,8 +9,8 @@ export default function NotFound() {
   }, [])
 
   return ready ? (
-    <div>
+    <Box state={props.state}>
       <h1>404 - Oh no's! We couldn't find that page :(</h1>
-    </div>
+    </Box>
   ) : null
 }
