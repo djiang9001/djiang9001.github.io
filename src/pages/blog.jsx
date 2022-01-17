@@ -3,6 +3,7 @@ import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
 import { Box } from 'components/Box'
+import Content from 'components/Content'
 
 export default function Blog(props) {
   const [oldPosts, setOldPosts] = useState([]);
@@ -14,6 +15,7 @@ export default function Blog(props) {
     return <div>No Posts</div>
   }
   return (
+    <Content>
     <Box state={props.state}>
     <div>
       <h1>It's blog time.</h1>
@@ -36,5 +38,6 @@ export default function Blog(props) {
       </a>
     </div>
     </Box>
+    </Content>
   );
 }

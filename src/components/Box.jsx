@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes, css } from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { Transition } from "react-transition-group";
 
 const appearDuration = 475;
@@ -128,6 +128,10 @@ const PlaceholderDiv = styled.div`
     &.${transitionName}-exited {
         visibility: hidden;
     }
+    &:hover {
+        transition: opacity 0.5s;
+        opacity: 100%;
+    }
 `
 
 const TopBarStatic = styled.div`
@@ -144,12 +148,16 @@ const TopBarStatic = styled.div`
     &.${transitionName}-exited {
         visibility: hidden;
     }
+    ${PlaceholderDiv}:hover & {
+        background: linear-gradient(to bottom, white, transparent 0.5rem);
+        background-clip: padding-box;
+    }
 `
 const TopBarClickable = styled(TopBarStatic)`
     ${PlaceholderDiv}:hover & {
         transition: transform 0.5s;
         transform: translateY(0.5rem);
-        background: linear-gradient(to top, transparent, 80%, white);
+        background: linear-gradient(to bottom, white, transparent 1rem);
         background-clip: padding-box;
     }
     ${PlaceholderDiv}:active & {
@@ -171,12 +179,16 @@ const BottomBarStatic = styled.div`
     &.${transitionName}-exited {
         visibility: hidden;
     }
+    ${PlaceholderDiv}:hover & {
+        background: linear-gradient(to top, white, transparent 0.5rem);
+        background-clip: padding-box;
+    }
 `
 const BottomBarClickable = styled(BottomBarStatic)`
     ${PlaceholderDiv}:hover & {
         transition: transform 0.5s;
         transform: translateY(-0.5rem);
-        background: linear-gradient(to bottom, transparent, 80%, white);
+        background: linear-gradient(to top, white, transparent 1rem);
         background-clip: padding-box;
     }
     ${PlaceholderDiv}:active & {
@@ -215,14 +227,15 @@ export function Box(props) {
         state,
         clickable,
         Wrapper = React.Fragment,
-        wrapperProps
+        wrapperProps,
+        ...restProps
     } = props;
-    const TopBar = clickable ? <TopBarClickable className={`box-${state}`}/> : <TopBarStatic className={`box-${state}`}/>;
-    const BottomBar = clickable ? <BottomBarClickable className={`box-${state}`}/> : <BottomBarStatic className={`box-${state}`}/>;
+    const TopBar = clickable ? <TopBarClickable className={`${transitionName}-${state}`}/> : <TopBarStatic className={`${transitionName}-${state}`}/>;
+    const BottomBar = clickable ? <BottomBarClickable className={`${transitionName}-${state}`}/> : <BottomBarStatic className={`${transitionName}-${state}`}/>;
     return (
         <Wrapper {...wrapperProps}>
-            <PlaceholderDiv className={`box-${state}`}>
-                <BoxContent className={`box-${state}`}>
+            <PlaceholderDiv className={`${transitionName}-${state}`}>
+                <BoxContent className={`${transitionName}-${state}`} {...restProps}>
                     {props.children}
                 </BoxContent>
                 {TopBar}

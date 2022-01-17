@@ -1,10 +1,11 @@
-import React, { useState }  from 'react'
+import React, { useState, useEffect }  from 'react'
 import styled from 'styled-components'
 import { AnimatedBox } from 'components/Box'
 
 
 export const Nav = styled.nav`
-    width: 100%;
+    width: auto;
+    right: 0;
     text-align: center;
     display: flex;
     padding: 1rem;
@@ -12,6 +13,8 @@ export const Nav = styled.nav`
     justify-content: flex-end;
     align-items: center;
     box-sizing: border-box;
+    position: fixed;
+    z-index: 2;
 `
 
 const MenuBar = styled.div`
@@ -30,6 +33,10 @@ function MenuIcon(props) {
     return <div style={ style }><MenuBar/><MenuBar style={{margin: '5px 0 5px 0'}}/><MenuBar/></div>
 }
 
+const ButtonWrapper = styled.button`
+    all: unset;
+    cursor: pointer;
+`
 export const AnimatedMenuIcon = styled(MenuIcon)`
     transition: transform 1s;
 `
@@ -37,6 +44,7 @@ export const AnimatedMenuIcon = styled(MenuIcon)`
 export function AnimatedNav(props) {
     const [inProp, setInProp] = useState(true);
     const rotate = inProp ? -90 : 0;
+
     const newNavLinks = React.Children.map(props.children, link => {
         // Checking isValidElement is the safe way and avoids a typescript
         // error too.
@@ -48,12 +56,20 @@ export function AnimatedNav(props) {
     function toggleLinks() {
         setInProp(!inProp);
     }
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.onscroll = () => {
+                setInProp(window.pageYOffset === 0);
+            }        
+            return () => (window.onscroll = null);
+        }
+    }, []);
     return (
         <Nav>
             {newNavLinks}
-            <button style={{ all: 'unset', cursor: 'pointer' }} onClick={ toggleLinks }>
+            <ButtonWrapper onClick={ toggleLinks }>
                 <AnimatedBox clickable><AnimatedMenuIcon rotate={rotate}/></AnimatedBox>
-            </button>
+            </ButtonWrapper>
         </Nav>
     );
 }

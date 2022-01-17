@@ -3,6 +3,7 @@ import { useRouteData } from 'react-static'
 //
 import { Link } from 'components/Router'
 import { Box } from 'components/Box'
+import Content from 'components/Content'
 
 export default function Post(props) {
   const [oldPost, setOldPost] = useState({});
@@ -14,6 +15,7 @@ export default function Post(props) {
     return <div>No post</div>
   }
   return (
+    <Content>
     <Box state={props.state}>
     <div>
       <Link to="/blog/">{'<'} Back</Link>
@@ -22,5 +24,6 @@ export default function Post(props) {
       <p>{oldPost.body}</p>
     </div>
     </Box>
+    </Content>
   );
 }

@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 // Main content div
 export const Content = styled.div`
-  padding: 1rem;
-  margin: 1rem;
-  background: #272727;
+  padding: calc(10vh + 8rem) 20vw 20vh 20vw;
 `
 export default Content
