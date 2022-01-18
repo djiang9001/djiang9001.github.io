@@ -19,10 +19,13 @@ export default (props) => (
   </Box>
   <Box style={{ padding: '10% 10% 10% 10%', flexDirection: 'column'}} state={props.state}>
     <p>
-      This is my personal developer website. It is built on React, in particular 
+      This is my personal website. It is built on React, in particular 
       using <a href='https://github.com/react-static/react-static' target='_blank'>React-Static</a>.
       Other libraries that were used include <a href='https://styled-components.com/' target='_blank'>styled-components</a> and <a href='https://reactcommunity.org/react-transition-group/' target='_blank'>React Transition Group</a> for styling and CSS animations,
       and <a href='https://github.com/pmndrs/react-three-fiber' target='_blank'>react-three-fiber</a> and <a href='https://threejs.org/' target='_blank'>Three.js</a> for the animated background.
+    </p>
+    <p>
+      The source code can be found on <a href='https://github.com/djiang9001/djiang9001.github.io/' target='_blank'>GitHub</a>.
     </p>
   </Box>
   </div>

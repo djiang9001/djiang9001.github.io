@@ -2,31 +2,6 @@ import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Transition } from "react-transition-group";
-
-
-export function Box(props) {
-    // This reference gives us direct access to the THREE.Mesh object
-    const ref = useRef()
-    // Hold state for hovered and clicked events
-    const [hovered, hover] = useState(false)
-    const [clicked, click] = useState(false)
-    // Subscribe this component to the render-loop, rotate the mesh every frame
-    useFrame((state, delta) => (ref.current.rotation.y += 0.01))
-    // Return the view, these are regular Threejs elements expressed in JSX
-    return (
-      <mesh
-        {...props}
-        ref={ref}
-        scale={clicked ? 1.5 : 1}
-        onClick={(event) => click(!clicked)}
-        onPointerOver={(event) => hover(true)}
-        onPointerOut={(event) => hover(false)}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-      </mesh>
-    )
-}
 
 function createCircleTexture(color, size) {
     if (typeof document !== 'undefined') {
@@ -55,11 +30,12 @@ export function CircleSprite(props) {
     const { point, shouldShow } = props;
     const ref = useRef();
     useFrame((state, delta) => {
-        ref.current.position.lerp(point, 0.01);
+        ref.current.position.set(point.x, point.y, point.z);
     });
     return(
         <sprite
             {...props}
+            position={point}
             ref={ref}>
             <spriteMaterial map={circleTexture}/>
         </sprite>
@@ -78,11 +54,11 @@ function randomSpherePoint(x0,y0,z0,radius,vector){
 const numPoints=300;
 const sphereRadius=1;
 const points = Array.from({length: numPoints}, () => new THREE.Vector3(0,0,0).clampLength(0,sphereRadius));
-points.map((point) => (randomSpherePoint(0,0,0,sphereRadius,point)));
-const circles = points.map((point, index) => (<CircleSprite key={index} point={point} position={point} scale={0.005} center={[0.5, 0.5]}/>));
 const oldPoints = points.map((point) => (point.clone()));
+points.map((point) => (randomSpherePoint(0,0,0,sphereRadius,point)));
 const geometry = new THREE.BufferGeometry().setFromPoints( points );
 const material = new THREE.LineBasicMaterial({ color: 0x171717 });
+const circles = oldPoints.map((point, index) => (<CircleSprite key={index} point={point} scale={0.005} center={[0.5, 0.5]}/>));
 
 export function newPoints() {
     points.map((point) => (randomSpherePoint(0,0,0,sphereRadius,point)));
@@ -133,14 +109,14 @@ function DefaultCamera() {
     return null;
 }
 
-const BackgroundContainer = React.memo(styled.div`
+const BackgroundContainer = styled.div`
     position: fixed;
-    z-index: 1;
+    z-index: 0;
     top: 0;
     left: 0;
     height: 100vh;
     width: 100vw;
-`)
+`
 
 export function Background(props) {
     return (

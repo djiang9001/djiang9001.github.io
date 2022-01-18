@@ -26,6 +26,9 @@ export default (props) => (
       <Box state={props.state}>
         <h1>Projects</h1>
       </Box>
+      <Box state={props.state}>
+        <p>Here are some personal side projects I have done. Check my <a href='https://github.com/djiang9001/' target='_blank'>GitHub</a> for more.</p>
+      </Box>
       <Project state={props.state}
       name={'Youtube Video Downloader'}
       desc={'A web application for downloading media from Youtube.'}
@@ -39,8 +42,8 @@ export default (props) => (
       <Project state={props.state}
       name={'This Website'}
       desc={'A personal website built using React.'}
-      demoLink={'https://djiang9001.github.io/devsite/'}
-      gitLink={'https://github.com/djiang9001/devsite/'}/>
+      demoLink={'https://djiang9001.github.io/'}
+      gitLink={'https://github.com/djiang9001/djiang9001.github.io/'}/>
     </div>
   </Content>
 )

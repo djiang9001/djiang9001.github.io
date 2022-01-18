@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Root, Routes, addPrefetchExcludes } from 'react-static'
+import React, { useState, useEffect } from 'react'
+import { Root, Routes } from 'react-static'
 import { createGlobalStyle } from 'styled-components'
 //
-import { Link, Router } from 'components/Router'
-import { SwitchTransition } from "react-transition-group";
-import Dynamic from 'containers/Dynamic'
+import { Link, Router, Wrap } from 'components/Router'
+import { SwitchTransition, Transition } from "react-transition-group";
 import { AnimatedNav } from 'components/Nav'
 import { AnimatedBox, AnimatedBoxContainer } from 'components/Box'
-//import { Background } from 'components/Background'
 import { Background, newPoints } from 'components/BackgroundCanvas'
 
-//import './app.css'
 const GlobalStyle = createGlobalStyle`
   * {
     scroll-behavior: smooth;
@@ -38,9 +35,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-// Any routes that start with 'dynamic' will be treated as non-static routes
-//addPrefetchExcludes(['dynamic'])
-
 function routeRender({routePath, getComponentForPath}) {
   // The routePath is used to retrieve the component for that path
   const element = getComponentForPath(routePath);
@@ -63,14 +57,12 @@ function App() {
         <AnimatedBox Wrapper={Link} wrapperProps={{to:'/'}} clickable>Home</AnimatedBox>
         <AnimatedBox Wrapper={Link} wrapperProps={{to:'/about'}} clickable>About</AnimatedBox>
         <AnimatedBox Wrapper={Link} wrapperProps={{to:'/projects'}} clickable>Projects</AnimatedBox>
-        {/*<AnimatedBox Wrapper={Link} wrapperProps={{to:'/dynamic'}} clickable>Dynamic</AnimatedBox>*/}
       </AnimatedNav>
-      <React.Suspense fallback={<em></em>}>
-          <Router>
-            {/*<Dynamic path="dynamic"/>*/}
-            <Routes path="*" render={routeRender}/>
-          </Router>
-      </React.Suspense>
+      <Wrap>
+        <React.Suspense fallback={<em></em>}>
+          <Routes render={routeRender}/>
+        </React.Suspense>
+      </Wrap>
     </Root>
   )
 }

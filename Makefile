@@ -19,6 +19,9 @@ serve: check-env
 stage: check-env
 	cd /app && yarn stage
 
+serve: check-env
+	cd /app && yarn serve
+
 # Check if we are in a docker container.
 check-env:
 ifndef AM_I_IN_A_DOCKER_CONTAINER
