@@ -22,12 +22,12 @@ serve: check-env
 stage: check-env
 	cd /app && yarn stage
 
-serve: check-env
-	cd /app && yarn serve
-
 deploy: check-env
 	cd /app && rm -rf docs && cp -R dist docs
 	touch docs/.nojekyll
+
+# deploy: for GitHub pages, copies /dist to /docs and adds .nojekyll
+# To deploy changes to GitHub pages, push /docs to main
 
 # Check if we are in a docker container.
 check-env:
