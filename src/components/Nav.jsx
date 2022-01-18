@@ -11,6 +11,7 @@ export const Nav = styled.nav`
     padding: 1rem;
     gap: 1rem;
     justify-content: flex-end;
+    flex-wrap: wrap-reverse;
     align-items: center;
     box-sizing: border-box;
     position: fixed;
