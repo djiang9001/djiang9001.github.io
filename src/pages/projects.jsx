@@ -42,7 +42,7 @@ export default (props) => (
       <Project state={props.state}
       name={'This Website'}
       desc={'A personal website built using React.'}
-      demoLink={'https://djiang9001.github.io/'}
+      demoLink={'/'}
       gitLink={'https://github.com/djiang9001/djiang9001.github.io/'}/>
     </div>
   </Content>

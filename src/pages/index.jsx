@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box } from 'components/Box'
 import Content from 'components/Content'
+import Resume from '../assets/Resume_2_0.pdf'
 
 export default (props) => {
   return (
@@ -15,7 +16,7 @@ export default (props) => {
       <Box state={props.state} Wrapper={'a'} wrapperProps={{href:'https://www.linkedin.com/in/djiang9001', target:'_blank'}} clickable>
         <h3>LinkedIn</h3>
       </Box>
-      <Box state={props.state} Wrapper={'a'} wrapperProps={{href:'/Resume_2_0.pdf', target:'_blank'}} clickable>
+      <Box state={props.state} Wrapper={'a'} wrapperProps={{href:Resume, target:'_blank'}} clickable>
         <h3>Resume</h3>
       </Box>
     </div>
