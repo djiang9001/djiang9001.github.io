@@ -3,8 +3,6 @@ import { Box } from 'components/Box'
 import Content from 'components/Content'
 
 export default (props) => {
-  console.log('index');
-  console.log(props);
   return (
   <Content>
     <Box style={{ fontSize: '2rem' }} state={props.state}>

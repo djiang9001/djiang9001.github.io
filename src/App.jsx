@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Root, Routes } from 'react-static'
 import { createGlobalStyle } from 'styled-components'
 //
-import { Link, Router, Wrap } from 'components/Router'
-import { SwitchTransition, Transition } from "react-transition-group";
+import { Link, Wrap } from 'components/Router'
+import { SwitchTransition } from "react-transition-group";
 import { AnimatedNav } from 'components/Nav'
 import { AnimatedBox, AnimatedBoxContainer } from 'components/Box'
 import { Background, newPoints } from 'components/BackgroundCanvas'
