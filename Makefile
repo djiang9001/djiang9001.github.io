@@ -13,6 +13,9 @@ start: check-env
 build: check-env
 	cd /app && yarn build
 
+build-debug: check-env
+	cd /app && yarn build-debug
+
 serve: check-env
 	cd /app && yarn serve
 
@@ -21,6 +24,10 @@ stage: check-env
 
 serve: check-env
 	cd /app && yarn serve
+
+deploy: check-env
+	cd /app && rm -rf docs && cp -R dist docs
+	touch docs/.nojekyll
 
 # Check if we are in a docker container.
 check-env:
