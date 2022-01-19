@@ -10,7 +10,7 @@ export default (props) => (
   <Box style={{ padding: '10% 10% 10% 10%', flexDirection: 'column'}} state={props.state}>
     <p>
       Hi. My name is Daniel Jiang. I'm a software developer currently studying at the University of Waterloo.
-      I'm expecting to complete my BMath degree (major in Computer Science and Combinatorics and Optimization, minor in Statistics)
+      I'm expecting to complete my BMath degree (double major in Computer Science and Combinatorics and Optimization, minor in Statistics)
       at the end of the 2023 winter term.
     </p>
   </Box>

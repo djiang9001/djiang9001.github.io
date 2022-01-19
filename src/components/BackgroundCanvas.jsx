@@ -66,39 +66,25 @@ export function newPoints() {
 
 function Sphere(props) {
     useFrame((state, delta) => {
-        oldPoints.map((point, index) => point.lerp(points[index], 0.01));
+        oldPoints.map((point, index) => point.lerp(points[index], delta));
         geometry.setFromPoints(oldPoints);
     });
     return <>{circles}</>;
 }
-
-// fit width 2.2 on screen
-// 2 * Math.atan((sphereRadius + 0.1)/2) gives horizontal fov in radians
-// given hfov: Math.tan(hfov)/aspect = width/aspect/dist = height/dist
-// then atan(height/dist) = vfov
-
-// returns in radians
-function hfovToVfov(hfov, aspect) {
-    return Math.atan(Math.tan(hfov) / aspect);
-}
 var axisX = new THREE.Vector3(1,0,0);
 var axisY = new THREE.Vector3(0,1,0);
+const dist = sphereRadius + 1; // distance from center of sphere (ie. the origin)
 function DefaultCamera() {
-    const { camera, viewport } = useThree();
+    const { camera } = useThree();
     camera.position.clampLength(1.9,2.1);
     useEffect(() => {
-        const z = sphereRadius + 1;
-        camera.lookAt(0,0,0);
-        camera.position.set(0,0,z);
-        const hfov = 2 * Math.atan((sphereRadius)/2); //radians
-        camera.fov = hfovToVfov(hfov, viewport.aspect) * (180 / Math.PI);//convert to degrees
-        camera.updateProjectionMatrix();
+        camera.position.set(0,0,dist);
     }, []);
     var oldpos = 0;
     useFrame((state, delta) => {
         axisY.set(0,1,0);
         axisY.copy(state.camera.localToWorld(axisY).sub(state.camera.position));
-        state.camera.position.applyAxisAngle(axisY, -0.0005);
+        state.camera.position.applyAxisAngle(axisY, -0.03 * delta);
         if (typeof window !== 'undefined') {
             if (window.pageYOffset != oldpos) {
                 // -camera.pos cross camera up gives local x axis
@@ -109,6 +95,8 @@ function DefaultCamera() {
         }
         state.camera.up.copy(axisY);
         state.camera.lookAt(0,0,0);
+        // make sphere fit inside screen width, with some extra space
+        state.camera.fov = 2 * Math.atan((1.2* sphereRadius) / state.viewport.aspect / dist) * (180 / Math.PI);
         state.camera.updateProjectionMatrix();
     });
     return null;
