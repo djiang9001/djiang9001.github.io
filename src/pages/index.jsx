@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from 'components/Box'
 import Content from 'components/Content'
-import Resume from '../assets/Resume_2_0.pdf'
+import Resume from '../assets/Daniel_Jiang_Resume.pdf'
 
 export default (props) => {
   return (

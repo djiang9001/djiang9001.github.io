@@ -51,6 +51,7 @@ function routeRender({routePath, getComponentForPath}) {
 function App() {
   return (
     <Root>
+      <noscript>You need JavaScript to view this site properly!</noscript>
       <GlobalStyle/>
       <Background/>
       <AnimatedNav>
