@@ -81,8 +81,11 @@ function Sphere(props) {
 function hfovToVfov(hfov, aspect) {
     return Math.atan(Math.tan(hfov) / aspect);
 }
+var axisX = new THREE.Vector3(1,0,0);
+var axisY = new THREE.Vector3(0,1,0);
 function DefaultCamera() {
     const { camera, viewport } = useThree();
+    camera.position.clampLength(1.9,2.1);
     useEffect(() => {
         const z = sphereRadius + 1;
         camera.lookAt(0,0,0);
@@ -93,16 +96,18 @@ function DefaultCamera() {
     }, []);
     var oldpos = 0;
     useFrame((state, delta) => {
-        var axisX = new THREE.Vector3(1,0,0);
-        state.camera.position.applyAxisAngle(camera.up, -0.0005);
+        axisY.set(0,1,0);
+        axisY.copy(state.camera.localToWorld(axisY).sub(state.camera.position));
+        state.camera.position.applyAxisAngle(axisY, -0.0005);
         if (typeof window !== 'undefined') {
-            if (window.pageYOffset > oldpos) {
-                state.camera.position.applyAxisAngle(axisX, 0.02);
-            } else if (window.pageYOffset < oldpos) {
-                state.camera.position.applyAxisAngle(axisX, -0.02);
+            if (window.pageYOffset != oldpos) {
+                // -camera.pos cross camera up gives local x axis
+                axisX.set(1,0,0);
+                state.camera.position.applyAxisAngle(state.camera.localToWorld(axisX).sub(state.camera.position), 0.001 * (window.pageYOffset - oldpos));
             }
             oldpos = window.pageYOffset;
         }
+        state.camera.up.copy(axisY);
         state.camera.lookAt(0,0,0);
         state.camera.updateProjectionMatrix();
     });
