@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { CanvasProps } from '@react-three/fiber';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, MeshDiscardMaterial, MeshTransmissionMaterial, Outlines, PerspectiveCamera } from '@react-three/drei';
+import { Html, MeshDiscardMaterial, MeshTransmissionMaterial, Outlines, PerformanceMonitor, PerspectiveCamera } from '@react-three/drei';
 
 import { Box, ThemeProvider, useColorScheme, useTheme } from '@mui/material';
 import { BoxGeometry, InstancedMesh, MathUtils, Matrix4, MeshBasicMaterial, Plane, Vector3 } from 'three';
@@ -255,6 +255,10 @@ const ContentCube: FC = () => {
   const aspectRatio = dimensions.width / dimensions.height;
   const isVertical = aspectRatio < 1;
 
+  // Performance tuning variables
+  const [cubeRes, setCubeRes] = useState<number|undefined>(undefined);
+  const [useTransmissionSampler, setUseTransmissionSampler] = useState<boolean>(false);
+
   // Rotate on page navigation
   useEffect(() => {
     if (!firstRender.current) {
@@ -285,7 +289,7 @@ const ContentCube: FC = () => {
     <group position={[0, 0, 0]}>
     <mesh ref={contentCubeRef} scale={12}>
       <boxGeometry />
-      <MeshTransmissionMaterial color={'#ffffff'} transmission={1} backside backsideThickness={3} thickness={3}/>
+      <MeshTransmissionMaterial color={'#ffffff'} transmission={1} backside backsideThickness={3} thickness={3} resolution={cubeRes} backsideResolution={cubeRes} transmissionSampler={useTransmissionSampler}/>
     </mesh>
     <group ref={currentContentRef}>
       <Html center transform position={[0, 0, 6.1]} scale={1} occlude="blending" material={<MeshTransmissionMaterial transmission={1} transmissionSampler/>}>
@@ -336,6 +340,37 @@ const ContentCube: FC = () => {
         {actualMode === "dark" ? <LightModeIcon/> : <DarkModeIcon/>}
       </Box>
     </CubeButton>
+    <PerformanceMonitor
+      bounds={(refreshrate) => ([30, refreshrate])}
+      onIncline={() => {
+        if (useTransmissionSampler) {
+          setUseTransmissionSampler(false);
+          console.log("disable transmissionSampler")
+          return;
+        }
+        if (cubeRes !== undefined) {
+          if (cubeRes >= 512) {
+            setCubeRes(undefined);
+            console.log("disable meshTransmissionMaterial res");
+          } else {
+            setCubeRes(cubeRes * 2);
+            console.log("increase meshTransmissionMaterial res to " + cubeRes)
+          }
+        }
+      }}
+      onDecline={() => {
+        if (cubeRes === undefined) {
+          setCubeRes(512);
+          console.log("decrease meshTransmissionMaterial res to " + cubeRes)
+        } else if (cubeRes <= 32) {
+          setCubeRes(32);
+          setUseTransmissionSampler(true);
+          console.log("enable transmissionSampler")
+        } else {
+          setCubeRes(cubeRes / 2);
+          console.log("decrease meshTransmissionMaterial res to " + cubeRes)
+        }
+      }}/>
     </group>
   );
 }
