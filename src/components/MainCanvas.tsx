@@ -8,11 +8,15 @@ import { Box, ThemeProvider, useColorScheme, useTheme } from '@mui/material';
 import { BoxGeometry, InstancedMesh, MathUtils, Matrix4, MeshBasicMaterial, Plane, Vector3 } from 'three';
 
 import { Route, useLocation, useRoute } from 'wouter';
+
 import { AboutPage } from '@app/pages/AboutPage';
 import { CareerPage } from '@app/pages/CareerPage';
 import { ContactPage } from '@app/pages/ContactPage';
 import { HomePage } from '@app/pages/HomePage';
 import { ProjectsPage } from '@app/pages/ProjectsPage';
+
+import { degreeToRad, radToDegree, roundVector3AwayFromZero, useWindowDimensions } from '@app/helpers/helpers';
+
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
@@ -22,28 +26,20 @@ type CubeParticle = {
   position: Matrix4;
 }
 
-const roundAwayFromZero = (num: number): number => {
-  if (num > 0) {
-    return Math.ceil(num);
-  } else {
-    return Math.floor(num);
-  }
-}
-
-const roundVector3AwayFromZero = (vec: Vector3): Vector3 => {
-  vec.setX(roundAwayFromZero(vec.x));
-  vec.setY(roundAwayFromZero(vec.y));
-  vec.setZ(roundAwayFromZero(vec.z));
-  return vec;
-}
-
 const Background: FC = () => {
   const theme = useTheme();
+
+  // Background cube mesh geometry and material
   const cubeGeo = new BoxGeometry();
   const cubeMat = new MeshBasicMaterial({ color: theme.palette.primary.main });
 
+  // Max number of cubes in background at once
   const count = 500;
+
+  // Number of frames cubes will exist
   const lifespan = 15;
+
+  // Constant unit vectors
   const neighbours = [
     new Vector3(1, 0, 0),
     new Vector3(-1, 0, 0),
@@ -54,9 +50,19 @@ const Background: FC = () => {
   ];
   const identity = new Vector3(1, 1, 1);
   const zero = new Vector3(0, 0, 0);
+
+  // Ref for tracking time since last animation step
   const timeSinceLastStep = useRef<number>(0);
   const timePerStep = 1 / 60;
+
+  // Plane where cubes will spawn from
   const planeDist = 25;
+  const plane = new Plane(new Vector3(0, 0, 1), planeDist);
+
+  // Constant vector to be added to pointer intersect position to ensure cubes spawn in middle of grid
+  const adjustmentVector = new Vector3(0.5, 0.5, 0);
+
+  // This is needed to prevent cube instances from being visible when cube material changes, i.e. on dark mode toggle
   useEffect(() => {
     if (instancesRef.current) {
       instancesRef.current.count = count;
@@ -65,24 +71,36 @@ const Background: FC = () => {
       }
       instancesRef.current.instanceMatrix.needsUpdate = true;
     }
-  }, [cubeMat])
+  }, [cubeMat]);
+
+  // Ref used to prevent cubes from spawning on initial page load
   const detectedFirstMove = useRef<boolean>(false);
-  // Life stores 5 arrays of tuples [i, v] where i is the instance index and v is the speed
+
+  // life[i] contains all CubeParticles with lifespan i remaining
   const life = useRef<CubeParticle[][]>(Array(lifespan).fill([]));
+
+  // Indices of instances that are available to spawn cubes
   const availableInstances = useRef<number[]>(Array(count).fill(0).map((_v, i) => i));
+
+  // Ref to instancedMesh object
   const instancesRef = useRef<InstancedMesh>(null);
+
+  // Vectors for tracking pointer position
   const oldTarget = useRef<Vector3>(new Vector3());
   const target = new Vector3(undefined, undefined, undefined);
+
+  // Vectors to hold values here to be reused, so we don't need to allocate new vectors every time
   const velocity = new Vector3();
-  const plane = new Plane(new Vector3(0, 0, 1), planeDist);
-  const adjustmentVector = new Vector3(0.5, 0.5, 0);
   const matrix = new Matrix4();
   const translationMatrix = new Matrix4();
   const displacement = new Vector3();
+
+  // Prevent any cubes from spawning initially
   if (instancesRef.current) {
     instancesRef.current.count = 0;
   }
 
+  // Per frame logic
   useFrame(( state, delta ) => {
     timeSinceLastStep.current = timeSinceLastStep.current + delta;
     if (timeSinceLastStep.current > timePerStep) {
@@ -146,6 +164,7 @@ const Background: FC = () => {
       });
     }
   });
+
   return(
     <instancedMesh
       ref={instancesRef}
@@ -167,15 +186,27 @@ export const MainCanvas: FC<CanvasProps> = (props: CanvasProps) => {
   const theme = useTheme();
   const backgroundColor = theme.palette.background.default;
 
+  // Ensure all interactable cubes stay on screen
+  const dimensions = useWindowDimensions();
+  const aspectRatio = dimensions.width / dimensions.height;
+  if (aspectRatio < 1) {
+    var minVerticalFov = 55;
+    var minHorizontalFov = 40;
+  } else {
+    var minVerticalFov = 40;
+    var minHorizontalFov = 65;
+  }
+  const vFOV = Math.max(radToDegree(2 * Math.atan(Math.tan(degreeToRad(minHorizontalFov) / 2) / aspectRatio)), minVerticalFov);
+
   return (<>
     <Canvas {...props} style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, overflow: 'hidden', zIndex: -1 }}>
       <color attach="background" args={[backgroundColor]} />
       {/* <gridHelper position={[0, 0, -100]} rotation={[Math.PI/2, 0, 0]} args={[500, 500, "grey", "grey"]}/>
       <Line points={[[0, 0, 0], [1, 0, 0]]} color="red" linewidth={2}/>
       <Line points={[[0, 0, 0], [0, 1, 0]]} color="green" linewidth={2}/>
-      <Line points={[[0, 0, 0], [0, 0, 1]]} color="blue" linewidth={2}/> */}
-      <PerspectiveCamera makeDefault position={[0, 0, 25]} fov={40}/>
-      {/* <OrbitControls/> */}
+      <Line points={[[0, 0, 0], [0, 0, 1]]} color="blue" linewidth={2}/>
+      <OrbitControls/> */}
+      <PerspectiveCamera makeDefault position={[0, 0, 25]} fov={vFOV}/>
       <ambientLight intensity={10}/>
       <Background/>
       <ContentCube />
@@ -185,6 +216,7 @@ export const MainCanvas: FC<CanvasProps> = (props: CanvasProps) => {
 
 const ContentCube: FC = () => {
   const theme = useTheme();
+  const [location, navigate] = useLocation();
   const { mode, systemMode, setMode } = useColorScheme();
   var actualMode = mode;
   if (mode === "system") {
@@ -193,23 +225,37 @@ const ContentCube: FC = () => {
 
   const contentCubeRef = useRef<any>(null);
   const currentContentRef = useRef<any>(null);
+
+  // Possible rotations for the cube to do on page navigation
   const neighbourRotations = [
     [new Vector3(0, 1, 0), Math.PI/2],
     [new Vector3(0, 1, 0), -Math.PI/2],
     [new Vector3(1, 0, 0), Math.PI/2],
     [new Vector3(1, 0, 0), -Math.PI/2],
   ];
+  // Selected rotation
   const targetRotation = useRef<any[]>([]);
-  const [location, navigate] = useLocation();
+
+  // Function for checking if current route matches target string
   const routeMatch = (targetLocation: string) => {
     const [isMatch] = useRoute(targetLocation);
     return isMatch;
   }
+
+  // Duration of cube spin
   const duration = 0.2;
+  // Ref for tracking if spin is finished
   const elapsedTime = useRef<number>(0);
   const rotationDone = useRef<boolean>(true);
+  // Ref for preventing spin on first render
   const firstRender = useRef<boolean>(true);
 
+  // Determines if the page layout should be horizontal or vertical
+  const dimensions = useWindowDimensions();
+  const aspectRatio = dimensions.width / dimensions.height;
+  const isVertical = aspectRatio < 1;
+
+  // Rotate on page navigation
   useEffect(() => {
     if (!firstRender.current) {
       var random = Math.floor(Math.random() * 4);
@@ -262,22 +308,22 @@ const ContentCube: FC = () => {
         </ThemeProvider>
       </Html>
     </group>
-    <CubeButton positionX={-10} positionY={4} onClick={() => navigate("/")} outlined={routeMatch("/")}>
+    <CubeButton positionX={-10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/")} outlined={routeMatch("/")}>
       Home
     </CubeButton>
-    <CubeButton positionX={-10} positionY={0} onClick={() => navigate("/about")} outlined={routeMatch("/about")}>
+    <CubeButton positionX={-10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/about")} outlined={routeMatch("/about")}>
       About
     </CubeButton>
-    <CubeButton positionX={-10} positionY={-4} onClick={() => navigate("/projects")} outlined={routeMatch("/projects")}>
+    <CubeButton positionX={-10} positionY={-4} flipXYPos={isVertical} onClick={() => navigate("/projects")} outlined={routeMatch("/projects")}>
       Projects
     </CubeButton>
-    <CubeButton positionX={10} positionY={4} onClick={() => navigate("/career")} outlined={routeMatch("/career")}>
+    <CubeButton positionX={10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/career")} outlined={routeMatch("/career")}>
       Career
     </CubeButton>
-    <CubeButton positionX={10} positionY={0} onClick={() => navigate("/contact")} outlined={routeMatch("/contact")}>
+    <CubeButton positionX={10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/contact")} outlined={routeMatch("/contact")}>
       Contact
     </CubeButton>
-    <CubeButton positionX={10} positionY={-4} outlined={routeMatch("/bomb")}
+    <CubeButton positionX={10} positionY={-4} flipXYPos={isVertical} outlined={routeMatch("/bomb")}
       onClick={() => {
         if (actualMode === "dark") {
           setMode("light");
@@ -300,11 +346,17 @@ type CubeButtonProps = {
   outlined: boolean;
   onClick: () => void;
   children?: React.ReactNode;
+  flipXYPos?: boolean;
 }
 
-const CubeButton: FC<CubeButtonProps> = ({positionX, positionY, outlined, onClick, children}) => {
+const CubeButton: FC<CubeButtonProps> = ({positionX, positionY, outlined, onClick, children, flipXYPos = false}) => {
   const theme = useTheme();
   const [hover, setHover] = useState<boolean>(false);
+  if (flipXYPos) {
+    const temp = -(positionX * 0.8);
+    positionX = -positionY;
+    positionY = temp;
+  }
   return (
   <group  position={[positionX, positionY, 0]}>
     <mesh onClick={onClick} scale={hover ? 3 : 2.4} position={[0, 0, 4.8]} onPointerOver={() => { document.body.style.cursor = 'pointer'; setHover(true); }}
