@@ -198,6 +198,12 @@ export const MainCanvas: FC<CanvasProps> = (props: CanvasProps) => {
   }
   const vFOV = Math.max(radToDegree(2 * Math.atan(Math.tan(degreeToRad(minHorizontalFov) / 2) / aspectRatio)), minVerticalFov);
 
+  // Performance tuning variables
+  const [cubeRes, setCubeRes] = useState<number|undefined>(64);
+  const [useTransmissionSampler, setUseTransmissionSampler] = useState<boolean>(false);
+  const [disableMeshTransmissionMaterial, setDisableMeshTransmissionMaterial] = useState<boolean>(false);
+  const [disableBackground, setDisableBackground] = useState<boolean>(false);
+
   return (<>
     <Canvas {...props} style={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, overflow: 'hidden', zIndex: -1 }}>
       <color attach="background" args={[backgroundColor]} />
@@ -208,13 +214,61 @@ export const MainCanvas: FC<CanvasProps> = (props: CanvasProps) => {
       <OrbitControls/> */}
       <PerspectiveCamera makeDefault position={[0, 0, 25]} fov={vFOV}/>
       <ambientLight intensity={10}/>
-      <Background/>
-      <ContentCube />
+
+      {!disableBackground && <Background/>}
+      <ContentCube cubeRes={cubeRes} useTransmissionSampler={useTransmissionSampler} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial}/>
+      <PerformanceMonitor bounds={(refreshrate) => ([30, refreshrate - 10])}
+        onIncline={() => {
+          if (disableBackground) {
+            setDisableBackground(false);
+            console.log("enable background");
+          } else if (disableMeshTransmissionMaterial) {
+            setDisableMeshTransmissionMaterial(false);
+            console.log("enable meshTransmissionMaterial");
+          } else if (useTransmissionSampler) {
+            setUseTransmissionSampler(false);
+            console.log("disable transmissionSampler")
+            return;
+          } else if (cubeRes !== undefined) {
+            if (cubeRes >= 512) {
+              setCubeRes(undefined);
+              console.log("disable meshTransmissionMaterial res");
+            } else {
+              setCubeRes(cubeRes * 2);
+              console.log("increase meshTransmissionMaterial res to " + cubeRes)
+            }
+          }
+        }}
+        onDecline={() => {
+          if (cubeRes === undefined) {
+            setCubeRes(512);
+            console.log("decrease meshTransmissionMaterial res to " + cubeRes)
+          } else if (cubeRes > 32) {
+            setCubeRes(cubeRes / 2);
+            console.log("decrease meshTransmissionMaterial res to " + cubeRes)
+          } else if (useTransmissionSampler) {
+            setUseTransmissionSampler(false);
+            console.log("enable transmissionSampler")
+          } else if (!disableMeshTransmissionMaterial) {
+            setDisableMeshTransmissionMaterial(true);
+            console.log("disable meshTransmissionMaterial");
+          } else if (!disableBackground) {
+            setDisableBackground(true);
+            console.log("disable background");
+          }
+        }}
+      />
     </Canvas>
   </>)
 }
 
-const ContentCube: FC = () => {
+type ContentCubeProps = {
+  cubeRes: number | undefined;
+  useTransmissionSampler: boolean;
+  disableMeshTransmissionMaterial: boolean;
+}
+
+const ContentCube: FC<ContentCubeProps> = ({cubeRes, useTransmissionSampler, disableMeshTransmissionMaterial}) => {
   const theme = useTheme();
   const [location, navigate] = useLocation();
   const { mode, systemMode, setMode } = useColorScheme();
@@ -255,10 +309,6 @@ const ContentCube: FC = () => {
   const aspectRatio = dimensions.width / dimensions.height;
   const isVertical = aspectRatio < 1;
 
-  // Performance tuning variables
-  const [cubeRes, setCubeRes] = useState<number|undefined>(undefined);
-  const [useTransmissionSampler, setUseTransmissionSampler] = useState<boolean>(false);
-
   // Rotate on page navigation
   useEffect(() => {
     if (!firstRender.current) {
@@ -289,10 +339,16 @@ const ContentCube: FC = () => {
     <group position={[0, 0, 0]}>
     <mesh ref={contentCubeRef} scale={12}>
       <boxGeometry />
-      <MeshTransmissionMaterial color={'#ffffff'} transmission={1} backside backsideThickness={3} thickness={3} resolution={cubeRes} backsideResolution={cubeRes} transmissionSampler={useTransmissionSampler}/>
+      {disableMeshTransmissionMaterial
+        ? <meshBasicMaterial color={actualMode == "dark" ? "#404040" : theme.palette.secondary.main}/>
+        : <MeshTransmissionMaterial color={useTransmissionSampler ? theme.palette.secondary.main : '#ffffff'} transmission={1} backside backsideThickness={3} thickness={3} resolution={cubeRes} backsideResolution={cubeRes} transmissionSampler={useTransmissionSampler}/>}
+
     </mesh>
     <group ref={currentContentRef}>
-      <Html center transform position={[0, 0, 6.1]} scale={1} occlude="blending" material={<MeshTransmissionMaterial transmission={1} transmissionSampler/>}>
+      <Html center transform position={[0, 0, 6.1]} scale={1} occlude="blending"
+        material={disableMeshTransmissionMaterial
+          ? <meshBasicMaterial color={actualMode == "dark" ? "#202020" : theme.palette.primary.main}/>
+          : <MeshTransmissionMaterial color={useTransmissionSampler ? theme.palette.primary.main : '#ffffff'} transmission={1} transmissionSampler/>}>
         <ThemeProvider theme={theme}>
           <Route path="/">
             <HomePage/>
@@ -312,22 +368,22 @@ const ContentCube: FC = () => {
         </ThemeProvider>
       </Html>
     </group>
-    <CubeButton positionX={-10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/")} outlined={routeMatch("/")}>
+    <CubeButton positionX={-10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/")} outlined={routeMatch("/")} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}>
       Home
     </CubeButton>
-    <CubeButton positionX={-10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/about")} outlined={routeMatch("/about")}>
+    <CubeButton positionX={-10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/about")} outlined={routeMatch("/about")} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}>
       About
     </CubeButton>
-    <CubeButton positionX={-10} positionY={-4} flipXYPos={isVertical} onClick={() => navigate("/projects")} outlined={routeMatch("/projects")}>
+    <CubeButton positionX={-10} positionY={-4} flipXYPos={isVertical} onClick={() => navigate("/projects")} outlined={routeMatch("/projects")} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}>
       Projects
     </CubeButton>
-    <CubeButton positionX={10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/career")} outlined={routeMatch("/career")}>
+    <CubeButton positionX={10} positionY={4} flipXYPos={isVertical} onClick={() => navigate("/career")} outlined={routeMatch("/career")} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}>
       Career
     </CubeButton>
-    <CubeButton positionX={10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/contact")} outlined={routeMatch("/contact")}>
+    <CubeButton positionX={10} positionY={0} flipXYPos={isVertical} onClick={() => navigate("/contact")} outlined={routeMatch("/contact")} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}>
       Contact
     </CubeButton>
-    <CubeButton positionX={10} positionY={-4} flipXYPos={isVertical} outlined={routeMatch("/bomb")}
+    <CubeButton positionX={10} positionY={-4} flipXYPos={isVertical}  disableMeshTransmissionMaterial={disableMeshTransmissionMaterial} actualMode={actualMode}
       onClick={() => {
         if (actualMode === "dark") {
           setMode("light");
@@ -340,37 +396,6 @@ const ContentCube: FC = () => {
         {actualMode === "dark" ? <LightModeIcon/> : <DarkModeIcon/>}
       </Box>
     </CubeButton>
-    <PerformanceMonitor
-      bounds={(refreshrate) => ([30, refreshrate])}
-      onIncline={() => {
-        if (useTransmissionSampler) {
-          setUseTransmissionSampler(false);
-          console.log("disable transmissionSampler")
-          return;
-        }
-        if (cubeRes !== undefined) {
-          if (cubeRes >= 512) {
-            setCubeRes(undefined);
-            console.log("disable meshTransmissionMaterial res");
-          } else {
-            setCubeRes(cubeRes * 2);
-            console.log("increase meshTransmissionMaterial res to " + cubeRes)
-          }
-        }
-      }}
-      onDecline={() => {
-        if (cubeRes === undefined) {
-          setCubeRes(512);
-          console.log("decrease meshTransmissionMaterial res to " + cubeRes)
-        } else if (cubeRes <= 32) {
-          setCubeRes(32);
-          setUseTransmissionSampler(true);
-          console.log("enable transmissionSampler")
-        } else {
-          setCubeRes(cubeRes / 2);
-          console.log("decrease meshTransmissionMaterial res to " + cubeRes)
-        }
-      }}/>
     </group>
   );
 }
@@ -378,13 +403,15 @@ const ContentCube: FC = () => {
 type CubeButtonProps = {
   positionX: number;
   positionY: number;
-  outlined: boolean;
+  outlined?: boolean;
   onClick: () => void;
   children?: React.ReactNode;
   flipXYPos?: boolean;
+  disableMeshTransmissionMaterial?: boolean;
+  actualMode?: string;
 }
 
-const CubeButton: FC<CubeButtonProps> = ({positionX, positionY, outlined, onClick, children, flipXYPos = false}) => {
+const CubeButton: FC<CubeButtonProps> = ({positionX, positionY, outlined = false, onClick, children, flipXYPos = false, disableMeshTransmissionMaterial = false, actualMode}) => {
   const theme = useTheme();
   const [hover, setHover] = useState<boolean>(false);
   if (flipXYPos) {
@@ -398,7 +425,10 @@ const CubeButton: FC<CubeButtonProps> = ({positionX, positionY, outlined, onClic
       onPointerOut={() => { document.body.style.cursor = 'auto'; setHover(false); } }
     >
       <boxGeometry />
-      <MeshTransmissionMaterial color={theme.palette.secondary.main} transmission={1} backside backsideThickness={3} thickness={3} transmissionSampler/>
+      {disableMeshTransmissionMaterial
+        ? <meshBasicMaterial color={actualMode == "dark" ? "#202020" : theme.palette.primary.main}/>
+        : <MeshTransmissionMaterial color={theme.palette.secondary.main} transmission={1} backside backsideThickness={3} thickness={3} transmissionSampler/>}
+
       {outlined && <Outlines thickness={20} color={theme.palette.primary.main}/>}
     </mesh>
     <Html style={{ userSelect: "none", pointerEvents: "none", display: "flex", alignItems: "center", justifyContent: "center" }} center transform position={[0, 0, 6.1]} scale={1} occlude="blending" material={<MeshDiscardMaterial/>}>
