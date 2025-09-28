@@ -217,44 +217,41 @@ export const MainCanvas: FC<CanvasProps> = (props: CanvasProps) => {
 
       {!disableBackground && <Background/>}
       <ContentCube cubeRes={cubeRes} useTransmissionSampler={useTransmissionSampler} disableMeshTransmissionMaterial={disableMeshTransmissionMaterial}/>
-      <PerformanceMonitor bounds={(refreshrate) => ([30, refreshrate - 10])}
+      <PerformanceMonitor bounds={(refreshrate) => ([30, refreshrate * 0.9])}
         onIncline={() => {
-          if (disableBackground) {
-            setDisableBackground(false);
-            console.log("enable background");
-          } else if (disableMeshTransmissionMaterial) {
-            setDisableMeshTransmissionMaterial(false);
-            console.log("enable meshTransmissionMaterial");
+          if (disableMeshTransmissionMaterial) {
+            // Don't re-enable mesh transmission material if it was bad enough to warrant disabling
+            return;
           } else if (useTransmissionSampler) {
-            setUseTransmissionSampler(false);
             console.log("disable transmissionSampler")
+            setUseTransmissionSampler(false);
             return;
           } else if (cubeRes !== undefined) {
             if (cubeRes >= 512) {
-              setCubeRes(undefined);
               console.log("disable meshTransmissionMaterial res");
+              setCubeRes(undefined);
             } else {
+              console.log("increase meshTransmissionMaterial res to " + cubeRes * 2);
               setCubeRes(cubeRes * 2);
-              console.log("increase meshTransmissionMaterial res to " + cubeRes)
             }
           }
         }}
         onDecline={() => {
           if (cubeRes === undefined) {
+            console.log("decrease meshTransmissionMaterial res to " + 512);
             setCubeRes(512);
-            console.log("decrease meshTransmissionMaterial res to " + cubeRes)
           } else if (cubeRes > 32) {
+            console.log("decrease meshTransmissionMaterial res to " + cubeRes / 2);
             setCubeRes(cubeRes / 2);
-            console.log("decrease meshTransmissionMaterial res to " + cubeRes)
           } else if (useTransmissionSampler) {
+            console.log("enable transmissionSampler");
             setUseTransmissionSampler(false);
-            console.log("enable transmissionSampler")
           } else if (!disableMeshTransmissionMaterial) {
-            setDisableMeshTransmissionMaterial(true);
             console.log("disable meshTransmissionMaterial");
+            setDisableMeshTransmissionMaterial(true);
           } else if (!disableBackground) {
-            setDisableBackground(true);
             console.log("disable background");
+            setDisableBackground(true);
           }
         }}
       />
